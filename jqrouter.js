@@ -110,6 +110,9 @@
   };
 
   proto.execute = function(controllerName, actionName) {
+    if (!this.controllerMap) {
+      return;
+    }
     controllerName = controllerName || this.controllerName;
     actionName = actionName || this.actionName;
     var controller = this.controllerMap[controllerName];

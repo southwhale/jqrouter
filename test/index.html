@@ -78,13 +78,23 @@
         }
       };
 
-      jr.register(controllerMap);
-
-      jr.register('test3', {
+      jr.register(controllerMap)
+      .register('test3', {
         sayHi: function(d) {
           alert('Hi ' + (d.param.name || '') + '!');
+        },
+        _: function (d) {
+          alert('test3._');
         }
       })
+      .register('_', {
+        sayHero: function(d) {
+          alert('Hero ' + (d.param.name || '') + '!');
+        },
+        _: function (d) {
+          alert('_._');
+        }
+      });
     });
     </script>
   </body>

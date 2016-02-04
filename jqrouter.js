@@ -70,7 +70,7 @@
   };
 
   proto.parseControllerName = function(hash) {
-    var arr = /^\/([a-z][a-z0-9]*)/i.exec(hash || this.hash);
+    var arr = /^\/([a-z_][a-z0-9_]*)/i.exec(hash || this.hash);
     var controllerName = '_';
     if (arr && arr[1]) {
       controllerName = arr[1];
@@ -79,7 +79,7 @@
   };
 
   proto.parseActionName = function(hash) {
-    var arr = /^\/[a-z][a-z0-9]*\/([a-z][a-z0-9]*)/i.exec(hash || this.hash);
+    var arr = /^\/[a-z_][a-z0-9_]*\/([a-z_][a-z0-9_]*)/i.exec(hash || this.hash);
     var actionName = '_';
     if (arr && arr[1]) {
       actionName = arr[1];
@@ -110,14 +110,16 @@
   };
 
   proto.execute = function(controllerName, actionName) {
-    var controller = this.controllerMap[controllerName || this.controllerName];
+    controllerName = controllerName || this.controllerName;
+    actionName = actionName || this.actionName;
+    var controller = this.controllerMap[controllerName];
     if (!controller) {
-      console.error('[Controller: ' + controllerName + ']未注册!');
+      console.error('[Controller: ' + controllerName + '] not register!');
       return;
     }
-    var action = controller[actionName || this.actionName];
+    var action = controller[actionName];
     if (!action) {
-      console.error('[Controller.Action: ' + controllerName + '.' + actionName + ']未注册!');
+      console.error('[Controller.Action: ' + controllerName + '.' + actionName + '] not register!');
       return;
     }
     action.call(controller, this);
@@ -161,6 +163,7 @@
         this.controllerMap[controllerName] = controllerCopy;
       }
     }
+    return this;
   };
 
   proto.clear = function() {

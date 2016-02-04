@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>jqrouter test</title>
+    <style type="text/css">
+    .red {
+      color: red;
+    }
+    .blue {
+      color: blue;
+    }
+    </style>
+    <script type="text/javascript" src="../lib/jquery-2.2.0.min.js"></script>
+    <script type="text/javascript" src="../lib/jqmvvm.js"></script>
+    <script type="text/javascript" src="../jqrouter.js"></script>
+  </head>
+  <body>
+    <div jm-html="htmlContent" jm-class="clz" jm-style="sty"></div>
+    <input type="text" jm-value="form.emailInput.value" jm-change="form.emailInput.onchange"/>
+    <span jm-html="form.emailInput.value" jm-class="form.c1"></span>
+    <input type="file" jm-change="form.file"/>
+    <input type="text" jm-change="form.textInput.onchange" jm-value="form.textInput.value"/>
+    <span jm-text="form.textInput.value" jm-class="form.c1"></span>
+    <input type="button" jm-value="form.btnText" value="按钮一" jm-click="form.click1"/>
+    <button jm-text="form.btnText" jm-class="form.c1" jm-click="form.click2" jm-dblclick="form.dblclick">按钮二</button>
+    <select jm-change="form.select" jm-value="form.sv">
+      <option value="11">11</option>
+      <option value="22" selected>22</option>
+      <option value="33">33</option>
+    </select>
+    <script type="text/javascript">
+    $(document).ready(function() {
+      // 单页应用可 var = _jm = jm();
+      // _jm.scan(..) ...
+      jm.scan(document.body)
+
+      .set('form.emailInput.value', '383523223@qq.com')
+      .set('form.emailInput.onchange', function() {
+        alert(this.value)
+      })
+      .set('form.textInput.value', 'liwei@iguzhi.cn')
+      .set('form.textInput.onchange', function() {
+        alert(this.value)
+      })
+      .set('form.file', function(){alert(this.value)})
+      .set('form.btnText', 'hha')
+      .set('form.click1', function() {alert(111)})
+      .set('form.dblclick', function() {alert(444)})
+
+      .set("form.c1", 'red')
+      .set("form.select", function() {
+        alert(this.value)
+      });
+
+      /*setTimeout(function(){
+        jm.set("form.c1", 'blue');
+      },3000)
+
+      setTimeout(function(){
+        alert(jm.get("form.sv"));
+      },10000)*/
+
+
+      var controllerMap = {
+        test: {
+          sayhello: function() {
+            alert('hello');
+          },
+          sayHelloWorld: function() {
+            this.sayhello();
+            alert('world');
+          }
+        },
+        test2: {
+          searchquery: function(d) {
+            alert(d.query);
+          }
+        }
+      };
+
+      jr.register(controllerMap);
+
+      jr.register('test3', {
+        sayHi: function(d) {
+          alert('Hi ' + (d.param.name || '') + '!');
+        }
+      })
+    });
+    </script>
+  </body>
+
+</html>

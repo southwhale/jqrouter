@@ -55,7 +55,9 @@
     this.hash = this.getHash();
     this.controllerName = this.parseControllerName(this.hash);
     this.actionName = this.parseActionName(this.hash);
-    this.query = this.parseQuery(this.hash);
+    var result = this.parseQuery(this.hash);
+    this.path = result.path;
+    this.query = result.query;
     this.param = this.parseParams(this.query);
     this.execute();
   };
@@ -87,13 +89,22 @@
     return actionName;
   };
 
+
   proto.parseQuery = function(hash) {
     var arr = (hash || this.hash).split('~');
-    var query = '';
-    if (arr && arr[1]) {
-      query = decodeURIComponent(arr[1]);
+    var query = '', path = '';
+    if (arr && arr.length) {
+      if (arr[0]) {
+        path = arr[0];
+      }
+      if (arr[1]) {
+        query = decodeURIComponent(arr[1]);
+      }
     }
-    return query;
+    return {
+      path: path,
+      query: query
+    };
   };
 
   proto.parseParams = function(query) {
@@ -126,6 +137,12 @@
       return;
     }
     action.call(controller, this);
+    this.toggleActiveElement();
+  };
+
+  proto.toggleActiveElement = function() {
+    $('.jr-link-active').removeClass('jr-link-active');
+    $('*[href="#!' + this.path + '"]').addClass('jr-link-active');
   };
 
   /**

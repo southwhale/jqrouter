@@ -2,7 +2,7 @@
   * a micro spa router lib based on jquery
   * 本库遵循约定大于配置, hash部分完整格式如下:
   * #!/controllerName/actionName~paramName1=paramValue1&paramName2=paramValue2
-  * 值得注意的是: controllerName和actionName前的'/'不可或缺, 缺省的controllerName和actionName皆为'_'
+  * 值得注意的是: controllerName和actionName前的'/'不可或缺, 缺省的controllerName和actionName皆为'_', 缺省的模板皆为'$'
   * 本库不支持IE7及以下版本, 若需要支持请参考<a href="https://github.com/iamweilee/bird/blob/master/src/lib/bird/mvvm/bird.router.ie7support.js">bird.router.ie7support.js</a>自行实现
   * @author DavidLee
   */
@@ -140,6 +140,31 @@
     this.toggleActiveElement();
   };
 
+  proto.loadTemplate = function(controllerName) {
+    controllerName = controllerName || this.controllerName;
+    var controller = this.controllerMap[controllerName];
+    var templateContent;
+    if (controller && controller.$) {
+      if (typeof controller.$ === 'string' && !/^#/.test(controller.$)) {
+        templateContent = controller.$;
+      }
+      else {
+        templateContent = $(controller.$).html();
+      }
+      // 过滤脚本代码
+      templateContent = templateContent.replace(/<script\s*.+?<\/script>/ig, '');
+      this.container.html(templateContent);
+    }
+  };
+
+  proto.registerContainer = function(container) {
+    if (typeof container === 'string' && !/^#/.test(container)) {
+      container = '#' + container;
+    }
+    
+    container && (this.container = $(container));
+  };
+
   proto.toggleActiveElement = function() {
     $('.jr-link-active').removeClass('jr-link-active');
     $('*[href="#!' + this.path + '"]').addClass('jr-link-active');
@@ -149,11 +174,13 @@
    * 注册Controller, Controller的格式如下:
    * {
    *    controllerName1: {
+   *      $: '#templateId' | '<div>template content</div>', 
    *      actionName1: function() {...},
    *      actionName2: function() {...},
    *      ...
    *    },
    *    controllerName2: {
+   *      $: '#templateId' | '<div>template content</div>', 
    *      actionName1: function() {...},
    *      actionName2: function() {...},
    *      ...
@@ -161,7 +188,7 @@
    *    ...
    * }
    */
-  proto.register = function(controllerName, controller) {
+  proto.registerController = function(controllerName, controller) {
     this.controllerMap = this.controllerMap || {};
     var controllerMap, controllerCopy, i, j;
     if (arguments.length === 2) {

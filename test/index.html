@@ -28,6 +28,10 @@
       <option value="22" selected>22</option>
       <option value="33">33</option>
     </select>
+    <div id="container"></div>
+    <script type="text/tpl" id="tpl">
+    <div>iam template content</div>
+    </script>
     <script type="text/javascript">
     $(document).ready(function() {
       // 单页应用可 var = _jm = jm();
@@ -77,22 +81,25 @@
           }
         }
       };
-
-      jr.register(controllerMap)
-      .register('test3', {
+      jr.registerContainer('#container');
+      jr.registerController(controllerMap)
+      .registerController('test3', {
+        $: '<div>12321</div>',
         sayHi: function(d) {
           alert('Hi ' + (d.param.name || '') + '!');
         },
         _: function (d) {
-          alert('test3._');
+          d.loadTemplate();
+          alert(this.$);
         }
       })
-      .register('_', {
+      .registerController('_', {
+        $: '#tpl',
         sayHero: function(d) {
           alert('Hero ' + (d.param.name || '') + '!');
         },
         _: function (d) {
-          alert('_._');
+          d.loadTemplate();
         }
       });
     });
